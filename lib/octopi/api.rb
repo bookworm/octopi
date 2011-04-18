@@ -34,6 +34,34 @@ module Octopi
     def auth_parameters
       { :login => Api.me.login, :token => Api.me.token }
     end
+  end    
+
+  class GistAnonymousApi < Api
+    include HTTParty
+    include Singleton
+    base_uri "http://gist.github.com/api/v1"
+    
+    def read_only?
+      true
+    end   
+
+    def auth_parameters
+      { }
+    end
+  end  
+
+  class GistAuthApi < Api
+    include HTTParty
+    include Singleton
+    base_uri "http://gist.github.com/api/v1"
+    
+    def read_only?
+      false
+    end
+    
+    def auth_parameters
+      { :login => Api.me.login, :token => Api.me.token }
+    end     
   end
   
   # This is the real API class.
