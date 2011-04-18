@@ -10,7 +10,7 @@ module Octopi
     resource_path ":id"
     
     def self.base_uri
-      "https://gist.github.com/api/v1/yaml"
+      "https://gist.github.com/gists"
     end
     
     def self.find(id)
@@ -33,7 +33,7 @@ module Octopi
 		
 		def self.write(files,private_gist=false)   
 			data     = data(files,private_gist)
-			response = Api.api.post('/new', data)
+			response = Api.api.post('/', data)  
 		end
 		
 		def self.data(files,private_gist=false) 
