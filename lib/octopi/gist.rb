@@ -45,7 +45,6 @@ module Octopi
 		def self.write(files, private_gist = false)   
 			data = data(files,private_gist)   
 			set_api 
-			puts Api.api.inspect
 		  return Api.api.post(path_for(:create), data)     
 		end
 		
