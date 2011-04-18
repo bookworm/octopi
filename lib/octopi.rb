@@ -54,7 +54,8 @@ module Octopi
       rescue Octopi::NotFound
         raise Octopi::InvalidLogin
       end
-
+       
+      Api.authenticated = true
       Api.api = AuthApi.instance
       Api.api.trace_level = options[:trace] if options[:trace]
       Api.api.login = options[:login]

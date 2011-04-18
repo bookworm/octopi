@@ -21,7 +21,6 @@ module Octopi
 		def self.set_api()
 			if Api.authenticated == false 
 		  	Api.api = Octopi::GistAnonymousApi.instance  
-				return Api.api.post(path_for(:create), data)
 		  else       
 			  login = Api.api.login 
 			  token = Api.api.token
@@ -45,7 +44,8 @@ module Octopi
 		
 		def self.write(files, private_gist = false)   
 			data = data(files,private_gist)   
-			set_api
+			set_api 
+			puts Api.api.inspect
 		  return Api.api.post(path_for(:create), data)     
 		end
 		
