@@ -1,25 +1,37 @@
 module Octopi
-  # Gist API is... lacking at the moment.
-  # This class serves only as a reminder to implement it later
   class Gist < Base
     include HTTParty
     attr_accessor :description, :repo, :public, :created_at
     
     include Resource
     set_resource_name "tree"
-    resource_path ":id"
+    resource_path ":id" 
+		create_path "/new"   
     
     def self.base_uri
-      "https://gist.github.com/gists"
-    end
-    
+      "http://gist.github.com/api/v1"
+    end     
+
     def self.find(id)
       result = get("#{base_uri}/#{id}")
       # This returns an array of Gists, rather than a single record.
       new(result["gists"].first)
-    end 
+    end      
 
-    def self.new(files_list,private_gist=false)
+		def self.set_api()
+			if Api.authenticated == false 
+		  	Api.api = Octopi::GistAnonymousApi.instance  
+				return Api.api.post(path_for(:create), data)
+		  else       
+			  login = Api.api.login 
+			  token = Api.api.token
+		  	Api.api = Octopi::GistAuthApi.instance   
+		    Api.api.login = login
+		    Api.api.token = token
+		  end
+		end
+
+    def self.create(files_list, private_gist = false)
 		  files = []  
 			files_list.each do |file|  
 				files.push({
@@ -31,12 +43,13 @@ module Octopi
 			write(files, private_gist) 
 		end     
 		
-		def self.write(files,private_gist=false)   
-			data     = data(files,private_gist)
-			response = Api.api.post('/', data)  
+		def self.write(files, private_gist = false)   
+			data = data(files,private_gist)   
+			set_api
+		  return Api.api.post(path_for(:create), data)     
 		end
 		
-		def self.data(files,private_gist=false) 
+		def self.data(files, private_gist = false) 
 			data = {}
 	    files.each do |file|
 	      i = data.size + 1
@@ -47,10 +60,5 @@ module Octopi
 	    data.merge(private_gist ? { 'action_button' => 'private' } : {}) 
 		end
     
-    # def files
-    #   gists_folder = File.join(ENV['HOME'], ".octopi", "gists")
-    #   File.mkdir_p(gists_folder)
-    #   `git clone git://`
-    # end
   end
 end
